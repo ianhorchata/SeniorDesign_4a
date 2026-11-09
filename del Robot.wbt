@@ -7,8 +7,8 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.226204249205761 0.13726020396938576 0.9643605518930878 2.082715183215812
-  position 0.7011129870878903 -1.3005189437570484 0.9912719082686197
+  orientation 0.0033504930927826747 -0.0001801778524145017 0.9999943708501445 3.033299753360952
+  position 0.9130351844438447 0.2459023745759977 0.2114933742887972
 }
 TexturedBackground {
 }
@@ -17,7 +17,8 @@ TexturedBackgroundLight {
 RectangleArena {
 }
 DEF Box Solid {
-  translation 0 0.1 0
+  translation 1.2521363886157364e-17 0.1 0.049607598943442216
+  rotation -0.2855756930288616 0.7853331558293761 0.5492707510018702 1.1942911161223197e-16
   children [
     Shape {
       appearance PBRAppearance {
@@ -34,9 +35,12 @@ DEF Box Solid {
   }
   physics Physics {
   }
+  linearVelocity 1.7964370508978167e-17 -5.037266314399086e-17 8.274608913091434e-09
+  angularVelocity 7.993605777301126e-16 7.993605777301118e-16 -3.2446491934755923e-19
 }
 DEF Box Solid {
-  translation 0.3 0 0
+  translation 0.3 -1.9438385962684442e-18 0.04960759894344224
+  rotation 0.10199836325480759 -0.9179852692931841 -0.38327454814279094 8.359460443322447e-17
   children [
     Shape {
       appearance PBRAppearance {
@@ -54,9 +58,12 @@ DEF Box Solid {
   }
   physics Physics {
   }
+  linearVelocity -8.033171919723909e-20 -4.191854196371337e-17 8.274608784656489e-09
+  angularVelocity 1.06581410364015e-15 -2.664535259100374e-16 1.8725096269859286e-17
 }
 DEF Box Solid {
-  translation 0.05 -0.2 0
+  translation 0.05 -0.2 0.04960759894344221
+  rotation 0.9856526619940036 -0.15163887107600127 -0.07412477779346474 1.1245814174978553e-16
   children [
     Shape {
       appearance PBRAppearance {
@@ -74,10 +81,12 @@ DEF Box Solid {
   }
   physics Physics {
   }
+  linearVelocity -8.11501440486297e-18 -4.3605014214718014e-17 8.274608868794481e-09
+  angularVelocity 2.1316282072802985e-15 9.33046182565204e-49 1.7882294322472876e-16
 }
 DEF Box Solid {
-  translation -0.35 0.2 0.045
-  rotation 1 0 0 0.4
+  translation -0.34999999956462396 0.2113257651124713 0.029542391924055698
+  rotation 0.9999999999999695 2.4697908873120633e-08 2.460240530225851e-07 0.2514897806703375
   children [
     Shape {
       appearance PBRAppearance {
@@ -95,4 +104,29 @@ DEF Box Solid {
   }
   physics Physics {
   }
+  linearVelocity -7.045186369903646e-13 -3.728998711204563e-06 -6.065393374491891e-06
+  angularVelocity -0.00015687559406788135 3.1355802035984705e-11 2.8779937630283387e-12
+}
+DEF Box Solid {
+  translation -0.3499999998977171 0.319988388576855 0.019739119068810842
+  rotation 0.9999999999880557 4.8808682721032646e-06 2.5641559805192797e-07 0.0009794592481379462
+  children [
+    Shape {
+      appearance PBRAppearance {
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.1 0.1 0.04
+      }
+    }
+  ]
+  name "solid(4)"
+  boundingObject Box {
+    size 0.1 0.1 0.04
+  }
+  physics Physics {
+  }
+  linearVelocity -1.4125045237354413e-12 -1.3393965060481958e-06 -2.664363057824914e-06
+  angularVelocity 0.0002767866437679527 -1.0469010003400428e-10 2.7589134438945976e-11
 }
