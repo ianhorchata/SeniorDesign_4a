@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<robot name="ME480Robot">
+    <webots>
+        <!-- The ME480Driver plugin owns these devices; keep the built-in
+             interfaces from enabling/disabling them behind its back. -->
+        <device reference="lidar" type="Lidar">
+            <ros><enabled>false</enabled></ros>
+        </device>
+        <device reference="gps" type="GPS">
+            <ros><enabled>false</enabled></ros>
+        </device>
+
+        <plugin type="bringup.me480_driver.ME480Driver" />
+    </webots>
+</robot>

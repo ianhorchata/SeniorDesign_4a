@@ -14,12 +14,13 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/chairs/protos/OfficeChair.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/chairs/protos/Chair.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/apartment_structure/protos/Window.proto"
+EXTERNPROTO "../protos/ME480Robot.proto"
 
 WorldInfo {
 }
 Viewpoint {
-  orientation 0.24000038749960026 -0.44309758577200437 -0.8637501626529877 5.1629838826233225
-  position -5.049440261823384 -8.604028872542353 9.304422308418864
+  orientation -0.34885876361658796 -0.648420216088832 0.676645244138476 4.939677845514546
+  position -37.6047638986526 52.55564488617228 90.96819582171796
 }
 TexturedBackground {
   texture "noon_park_empty"
@@ -303,4 +304,6 @@ Chair {
   translation 8 -0.25 0
   rotation 0 0 1 -1.5707950010791611
   name "chair(20)"
+}
+ME480Robot {
 }

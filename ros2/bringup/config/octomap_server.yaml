@@ -1,0 +1,19 @@
+octomap_server:
+  ros__parameters:
+    # Voxel size in metres. Larger (e.g. 0.1) is much faster and lighter in RViz.
+    resolution: 0.05
+    frame_id: map
+    base_frame_id: base_link
+    # Color occupied voxels by height in RViz.
+    use_height_map: true
+    # Lidar maxRange is 30 m; the break room is 20 x 20 m.
+    sensor_model.max_range: 15.0
+    # Heights are in the map frame (floor is z = 0). Lidar noise scatters floor
+    # hits by a few cm, so cut at 10 cm; the walls are 3 m high.
+    point_cloud_min_z: 0.1
+    point_cloud_max_z: 3.0
+    # 2D occupancy grid on /projected_map: only cells the robot could collide with.
+    occupancy_min_z: 0.1
+    occupancy_max_z: 0.5
+    # Publish only to topics that have subscribers, instead of always preparing all of them.
+    latch: false

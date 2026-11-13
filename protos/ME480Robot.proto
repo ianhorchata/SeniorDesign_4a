@@ -1,0 +1,155 @@
+#VRML_SIM R2025a utf8
+# 4-wheel skid-steer robot with GPS, IMU and 16-layer 360° lidar.
+
+PROTO ME480Robot [
+  field SFVec3f    translation    0 0 0.07
+  field SFRotation rotation       0 0 1 0
+  field SFString   name           "robot"
+  field SFString   controller     "ME480R1"
+  field MFString   controllerArgs []
+  field SFBool     supervisor     FALSE
+]
+{
+  Robot {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    controller IS controller
+    controllerArgs IS controllerArgs
+    supervisor IS supervisor
+    children [
+      GPS {
+      }
+      InertialUnit {
+        translation 0 0 0.025
+        name "imu"
+      }
+      Lidar {
+        translation 0 0 0.025
+        horizontalResolution 400
+        fieldOfView 6.28
+        verticalFieldOfView 1.676
+        numberOfLayers 16
+        near 0.05
+        minRange 0.05
+        maxRange 30
+        noise 0.0007
+      }
+      DEF SENSEL Solid {
+        translation 0.1 0 0.025
+        name "solid(4)"
+      }
+      HingeJoint {
+        jointParameters HingeJointParameters {
+          axis 0 1 0
+          anchor 0.05 0.06 -0.025
+        }
+        device [
+          RotationalMotor {
+            name "wheel1"
+          }
+        ]
+        endPoint DEF WHEEL1 Solid {
+          translation 0.05 0.06 -0.025
+          rotation 1 0 0 1.5708
+          children [
+            DEF WHEEL Shape {
+              appearance PBRAppearance {
+                baseColor 0.2 0 1
+              }
+              geometry Cylinder {
+                height 0.02
+                radius 0.04
+              }
+            }
+          ]
+          boundingObject USE WHEEL
+          physics Physics {
+          }
+        }
+      }
+      HingeJoint {
+        jointParameters HingeJointParameters {
+          axis 0 1 0
+          anchor 0.05 -0.06 -0.025
+        }
+        device [
+          RotationalMotor {
+            name "wheel2"
+          }
+        ]
+        endPoint DEF WHEEL2 Solid {
+          translation 0.05 -0.06 -0.025
+          rotation 1 0 0 1.5708
+          children [
+            USE WHEEL
+          ]
+          name "solid(1)"
+          boundingObject USE WHEEL
+          physics Physics {
+          }
+        }
+      }
+      HingeJoint {
+        jointParameters HingeJointParameters {
+          axis 0 1 0
+          anchor -0.05 0.06 -0.025
+        }
+        device [
+          RotationalMotor {
+            name "wheel3"
+          }
+        ]
+        endPoint DEF WHEEL3 Solid {
+          translation -0.05 0.06 -0.025
+          rotation 1 0 0 1.5708
+          children [
+            USE WHEEL
+          ]
+          name "solid(2)"
+          boundingObject USE WHEEL
+          physics Physics {
+          }
+        }
+      }
+      HingeJoint {
+        jointParameters HingeJointParameters {
+          axis 0 1 0
+          anchor -0.05 -0.06 -0.025
+        }
+        device [
+          RotationalMotor {
+            name "wheel4"
+          }
+        ]
+        endPoint DEF WHEEL4 Solid {
+          translation -0.05 -0.06 -0.025
+          rotation 1 0 0 1.5708
+          children [
+            USE WHEEL
+          ]
+          name "solid(3)"
+          boundingObject USE WHEEL
+          physics Physics {
+          }
+        }
+      }
+      DEF BODY Shape {
+        appearance Appearance {
+          material Material {
+            ambientIntensity 0.1
+            emissiveColor 1 0 0
+            shininess 0
+            specularColor 1 0 0
+          }
+        }
+        geometry Box {
+          size 0.2 0.1 0.05
+        }
+      }
+    ]
+    boundingObject USE BODY
+    physics Physics {
+    }
+  }
+}

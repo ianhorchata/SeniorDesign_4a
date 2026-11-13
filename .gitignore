@@ -1,0 +1,4 @@
+# colcon output (regenerate with: colcon build --symlink-install)
+/build/
+/install/
+/log/
