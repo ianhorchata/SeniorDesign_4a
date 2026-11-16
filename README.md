@@ -8,6 +8,10 @@ To save map:
 ```bash
 ros2 run octomap_server octomap_saver_node --ros-args -p octomap_path:="PATH_TO_OCTOMAP_WORLD.bt"
 ```
+In my case:
+```bash
+ros2 launch bringup octomap_mapping.launch.py map:=/home/ianho/break_room_floor.bt
+```
 To get waypoint, use RViz or:
 ```bash
 ros2 service call /plan_path nav_msgs/srv/GetPlan \
