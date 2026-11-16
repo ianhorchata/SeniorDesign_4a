@@ -1,21 +1,24 @@
 """webots_ros2_driver plugin for the ME480 4-wheel skid-steer robot.
 
 Publishes
-  /PointCloud  sensor_msgs/PointCloud    raw lidar hits in the lidar frame
-  /gps         geometry_msgs/PointStamped robot position in the world (map) frame
-  /imu         sensor_msgs/Imu           robot orientation in the world (map) frame
+  /PointCloud2  sensor_msgs/PointCloud2    lidar hits (x, y, z) in the lidar frame
+  /gps          geometry_msgs/PointStamped robot position in the world (map) frame
+  /imu          sensor_msgs/Imu            robot orientation in the world (map) frame
 Subscribes
-  /cmd_vel     geometry_msgs/Twist       linear.x [m/s], angular.z [rad/s]
+  /cmd_vel      geometry_msgs/Twist        linear.x [m/s], angular.z [rad/s]
 """
 
+import ctypes
 import math
 
 import numpy as np
 import rclpy
 from builtin_interfaces.msg import Time
 from controller.wb import wb
-from geometry_msgs.msg import Point32, PointStamped, Twist
-from sensor_msgs.msg import Imu, PointCloud
+from geometry_msgs.msg import PointStamped, Twist
+from sensor_msgs.msg import Imu, PointCloud2
+from sensor_msgs_py import point_cloud2
+from std_msgs.msg import Header
 
 WHEEL_RADIUS = 0.04       # m, matches ME480Robot.proto
 HALF_TRACK = 0.06         # m, lateral distance from body center to wheel center
@@ -43,8 +46,7 @@ class ME480Driver:
         lidar_period = max(timestep, round(LIDAR_PERIOD_MS / timestep) * timestep)
         self.__lidar.enable(lidar_period)
         self.__lidar.enablePointCloud()
-        self.__lidar_period = lidar_period / 1000.0
-        self.__last_scan_time = -math.inf
+        self.__last_scan = None
 
         self.__gps = self.__robot.getDevice('gps')
         self.__gps.enable(timestep)
@@ -63,7 +65,7 @@ class ME480Driver:
         rclpy.init(args=None)
         self.__node = rclpy.create_node('me480_driver')
         self.__node.create_subscription(Twist, 'cmd_vel', self.__cmd_vel_callback, 1)
-        self.__cloud_pub = self.__node.create_publisher(PointCloud, 'PointCloud', 1)
+        self.__cloud_pub = self.__node.create_publisher(PointCloud2, 'PointCloud2', 1)
         self.__gps_pub = self.__node.create_publisher(PointStamped, 'gps', 10)
         self.__imu_pub = self.__node.create_publisher(Imu, 'imu', 10)
 
@@ -105,22 +107,23 @@ class ME480Driver:
         imu_msg.linear_acceleration_covariance[0] = -1.0
         self.__imu_pub.publish(imu_msg)
 
-    def __publish_cloud(self, stamp):
+    def __read_scan(self):
+        """The lidar's current point cloud as raw bytes, or None before the first scan."""
         count = self.__lidar.getNumberOfPoints()
         raw = wb.wb_lidar_get_point_cloud(self.__lidar._tag)
         if count == 0 or not raw:
-            return
-        points = np.frombuffer(bytes(raw[:count * LIDAR_POINT_DTYPE.itemsize]), dtype=LIDAR_POINT_DTYPE)
+            return None
+        return ctypes.string_at(raw, count * LIDAR_POINT_DTYPE.itemsize)
+
+    def __publish_cloud(self, scan, stamp):
+        points = np.frombuffer(scan, dtype=LIDAR_POINT_DTYPE)
         xyz = np.stack((points['x'], points['y'], points['z']), axis=1)
         # Rays that hit nothing come back as +inf.
         xyz = xyz[np.isfinite(xyz).all(axis=1)]
         xyz = xyz[np.einsum('ij,ij->i', xyz, xyz) > SELF_FILTER_RADIUS ** 2]
 
-        msg = PointCloud()
-        msg.header.stamp = stamp
-        msg.header.frame_id = 'lidar_link'
-        msg.points = [Point32(x=x, y=y, z=z) for x, y, z in xyz.tolist()]
-        self.__cloud_pub.publish(msg)
+        header = Header(stamp=stamp, frame_id='lidar_link')
+        self.__cloud_pub.publish(point_cloud2.create_cloud_xyz32(header, xyz))
 
     def step(self):
         rclpy.spin_once(self.__node, timeout_sec=0)
@@ -129,6 +132,11 @@ class ME480Driver:
         now = self.__robot.getTime()
         stamp = stamp_from_seconds(now)
         self.__publish_pose(stamp)
-        if now - self.__last_scan_time >= self.__lidar_period - 1e-6:
-            self.__last_scan_time = now
-            self.__publish_cloud(stamp)
+        # The lidar takes a new scan only every few steps. Publish each scan in the
+        # step it was taken, so that its stamp belongs to the robot pose it was taken
+        # from. Stamped a step late, a scan lands in the map turned by however far
+        # the robot has turned since. Sensor noise makes every new scan differ.
+        scan = self.__read_scan()
+        if scan is not None and scan != self.__last_scan:
+            self.__last_scan = scan
+            self.__publish_cloud(scan, stamp)

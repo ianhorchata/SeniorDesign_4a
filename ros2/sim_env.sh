@@ -1,8 +1,7 @@
 # Source this in every terminal used for the simulation:
 #   source SeniorDesign_4a/ros2/sim_env.sh
 #
-# Sets up ROS 2 Jazzy plus this workspace, and keeps ROS traffic on this
-# machine so the simulation nodes find each other without a discovery server.
+# Sets up ROS 2 Jazzy plus this workspace, and keeps ROS traffic on this machine so the simulation nodes find each other without a discovery server.
 
 _ros2_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # build/, install/ and log/ live in the repo root (SeniorDesign_4a).

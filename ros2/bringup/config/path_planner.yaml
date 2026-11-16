@@ -1,0 +1,30 @@
+path_planner:
+  ros__parameters:
+    # The voxel size ("resolution") is taken from octomap_server.yaml by the launch file.
+
+    # Height above the floor in which nothing may be occupied. The robot is only about
+    # 0.10 m tall, but the lidar sees a wall more than about 1 m away only from 0.15 to
+    # 0.25 m upwards. With a headroom below 0.3 m the planner drives "under" such walls.
+    # The price: no paths under anything lower than this, such as chairs and low tables.
+    headroom: 0.50
+    # Largest height change between two neighbouring floor cells that the robot drives over.
+    # One voxel (0.05 m) per cell allows ramps and absorbs the lidar noise in the floor height.
+    max_step: 0.05
+    # The lidar sits 9 cm above the ground and sees the floor only as scattered points.
+    # Gaps in the mapped floor narrower than this are treated as floor. 0 turns this off.
+    floor_gap: 0.30
+    # Minimum distance from the robot center to an obstacle, a drop or unmapped floor.
+    # The robot fits in a circle of 0.13 m radius; the rest is margin for the path follower.
+    clearance: 0.20
+    # Paths are pushed away from obstacles up to this distance ...
+    preferred_clearance: 0.45
+    # ... by making driving at the minimum clearance (1 + clearance_weight) times as expensive.
+    clearance_weight: 2.0
+    # How far the start and the goal may be from drivable floor.
+    snap_distance: 0.5
+    # Distance between the poses of the published path.
+    path_spacing: 0.10
+    # The path is published this far above the floor: the height of base_link.
+    path_height: 0.065
+    # Seconds between updates of /drivable_cells while RViz shows them. 0 = only when planning.
+    drivable_update_period: 3.0

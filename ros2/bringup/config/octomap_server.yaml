@@ -8,12 +8,8 @@ octomap_server:
     use_height_map: true
     # Lidar maxRange is 30 m; the break room is 20 x 20 m.
     sensor_model.max_range: 15.0
-    # Heights are in the map frame (floor is z = 0). Lidar noise scatters floor
-    # hits by a few cm, so cut at 10 cm; the walls are 3 m high.
-    point_cloud_min_z: 0.1
-    point_cloud_max_z: 3.0
-    # 2D occupancy grid on /projected_map: only cells the robot could collide with.
-    occupancy_min_z: 0.1
-    occupancy_max_z: 0.5
+    # No height limits (point_cloud_min_z/max_z, occupancy_min_z/max_z): the floors
+    # stay in the map, because the path planner needs them to know where the robot
+    # can stand. /projected_map therefore shows floor as occupied and is not useful.
     # Publish only to topics that have subscribers, instead of always preparing all of them.
     latch: false

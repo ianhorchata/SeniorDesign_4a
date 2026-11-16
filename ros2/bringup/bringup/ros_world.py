@@ -1,8 +1,11 @@
 """Derives a ROS-ready copy of a Webots world without touching the original.
 
-The copy is identical except that the ME480Robot node uses an <extern>
-controller, so webots_ros2_driver can attach to it. The original world keeps
-its own controller and still runs stand-alone in Webots.
+The copy differs in two ways:
+  * The ME480Robot node uses an <extern> controller, so webots_ros2_driver can
+    attach to it.
+  * A body-less Robot node is added for the RobotKeyboardControl controller,
+    which turns key presses in the Webots window into /cmd_vel.
+The original world keeps its own controller and still runs stand-alone in Webots.
 """
 
 import os
@@ -11,6 +14,8 @@ import tempfile
 
 ROBOT_PROTO = 'ME480Robot'
 DEFAULT_ROBOT_NAME = 'robot'   # default of the PROTO's "name" field
+# Name of the keyboard controller (controllers/<name>/<name>.py) and of its Robot node.
+KEYBOARD_ROBOT_NAME = 'RobotKeyboardControl'
 
 _ROBOT_NODE = re.compile(
     r'^((?:DEF \w+ )?' + ROBOT_PROTO + r' \{\n)(.*?)(^\})', re.MULTILINE | re.DOTALL)
@@ -51,6 +56,14 @@ def make_ros_world(world_path):
         return '"' + os.path.normpath(os.path.join(world_dir, url)) + '"'
 
     content = _ASSET_URL.sub(absolute_url, content)
+
+    # The ME480Robot's one controller slot is taken by the ROS driver, so the
+    # keyboard controller gets a robot of its own.
+    content = content.rstrip('\n') + (
+        '\nRobot {\n'
+        f'  name "{KEYBOARD_ROBOT_NAME}"\n'
+        '  controller "<extern>"\n'
+        '}\n')
 
     stem = os.path.splitext(os.path.basename(world_path))[0]
     with tempfile.NamedTemporaryFile(
