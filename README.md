@@ -4,13 +4,13 @@ cd ~/Desktop/webots_25a_ws/SeniorDesign_4a
 source ~/Desktop/webots_25a_ws/SeniorDesign_4a/ros2/sim_env.sh
 ros2 launch bringup octomap_mapping.launch.py map:="PATH_TO_OCTOMAP_WORLD.bt"
 ```
-To save map:
-```bash
-ros2 run octomap_server octomap_saver_node --ros-args -p octomap_path:="PATH_TO_OCTOMAP_WORLD.bt"
-```
 In my case:
 ```bash
 ros2 launch bringup octomap_mapping.launch.py map:=/home/ianho/break_room_floor.bt
+```
+To save map:
+```bash
+ros2 run octomap_server octomap_saver_node --ros-args -p octomap_path:="PATH_TO_OCTOMAP_WORLD.bt"
 ```
 To get waypoint, use RViz or:
 ```bash
